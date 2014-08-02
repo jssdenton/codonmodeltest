@@ -1,0 +1,74 @@
+## codonmodeltest.R (initial version 2013-09-30)
+
+## Copyright 2013 John S. S. Denton. Original loop structure was based on phymltest.R by Emmanuel Paradis
+## from the R package ape (http://cran.r-project.org/web/packages/ape/index.html)
+
+## INTRODUCTION
+
+## CodonModelTest is an R function that wraps codonPhyML (http://sourceforge.net/projects/codonphyml/ and
+http://mbe.oxfordjournals.org/content/30/6/1270) to provide a framework for fitting codon models to sequence
+data for downstream phylogenetic inference. CodonModelTest accepts PHYLIP (format for codonPhyML) files
+and converts NEXUS and FASTA (using the partner script convert.R) before running analysis. You should have
+both codonmodeltest.R and convert.R in the same directory as both your sequence data and 
+codonPhyML to run your analysis.
+
+Although there are many codon models in the literature (for review, see Chapters 2 and 3 in Codon Evolution: 
+Mechanisms and Models, ed. G.M. Cannarozzi and A. Schneider, 2012, Oxford University Press), CodonModelTest 
+fits only those models that are implementable in phylogenetic tree search programs that handle multilocus
+data regularly, and which are familiar to molecular systematists. As of this writing, the two most applicable 
+softwares are MrBayes (http://mrbayes.sourceforge.net/) and GARLI (https://code.google.com/p/garli/). 
+CodonModelTest writes appropriate NEXUS blocks and control files for these two programs automatically 
+during analysis. Blocks for mrbayes are written to take advantage of the BEAGLE library for speeding up
+analysis using GPU computation.
+
+CodonModelTest accepts files of any genetic code, and corrects for the different numbers of free parameters
+during model selection.
+
+Model selection in codonmodeltest is accomplished using any of the three major information criteria: AIC,
+AICc, and BIC. Likelihood ratio tests are not currently implemented. Furthermore, selection of best-fit
+reversible matrix submodels (e.g. abccba, in PAUP* notation) is not supported. 
+
+CodonModelTest fits models onto a single distance-based tree topology. For all genetic codes except
+mitochondrial, CodonModelTest uses the Kosiol et al. (2007) model for distances. For mitochondrial data
+codonmodeltest uses a Jukes-Cantor (1969) calculation. Search intensity per model has been set such that 
+most analyses should finish in an hour or two. Codonmodeltest currently runs 5 BFGS passes per model. The
+default is 10, but so far I have not noticed much of a difference in scores.
+
+Models tested in codonmodeltest are variants of the Goldman-Yang (1994) parameterization and the Muse-Gaut
+(1994) parameterization. Only GY models are implemented in phylogenetic search programs due to the similarity
+of their calculations with 4x4 nucleotide models. MG models are included as an option for comparison purposes
+only.
+
+For GY models, codonmodeltest fits M0, M3, and M5 variants, with F1xCODON, F1x4, and F3x4 frequencies. For M0,
+codonmodeltest also fits an M0+Gamma model. This model often provides very good fit for some data, especially 
+for fishes. I have found M5 to also provide good fit to many datasets, but it is not implemented in multilocus
+phylogeny programs. To approximate M5, an M3+Gamma model can be used, although be wary of the number of parameters
+and increased computational time and memory resources.
+
+I welcome input on improving and extending the code. Please cite the repository in any publications that use
+codonmodeltest.
+
+
+
+## VERSION HISTORY
+
+## 0.22:  Fixed rates typos. Made mrbayes model block output more specific.
+
+## 0.20:  Added some coarser heuristics for LL search. Uses 5 rounds of BFGS, instead of default
+##		  10 rounds.
+
+## 0.18:  Fixed problem with identifying nsites (probably a \s PHYLIP dimensions issue).
+
+## 0.17:  Added companion function for sequence file conversion from NEXUS and FASTA to sequential
+##        PHYLIP. Also fixed a few bugs.
+
+## 0.16:  Corrected model selection to eliminate Gamma[2] to reflect that Gamma[N] has a fixed number
+##        of parameters, regardless of N.
+
+## 0.155: fixed error in reporting ic.table that did not print output if a single model had weight 1.0.
+##	      also fixed associated error for assigning nst in MrBayes block when ic.table was length 1.
+
+## 0.15: fixed error with results folder specification if multiple copies of script in same folder.
+##       Fixed intermittent issue with path specification in Windows.
+
+## 0.10: initial version.
