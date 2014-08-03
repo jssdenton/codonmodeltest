@@ -272,7 +272,7 @@ ic.table <- matrix(nrow = length(codonmodeltest.model), ncol = length(c("k", "Lo
 
 message ("\n\nCreating and populating Results folder...\n\n")
 
-cmt <- list.files(pattern = "codonmodeltestv01", recursive = FALSE, full.names = TRUE)
+cmt <- list.files(pattern = "codonmodeltest\\.", recursive = FALSE, full.names = TRUE)
 pdir <- dirname(cmt)
 results.dir <- paste(strsplit(basename(seqfile), "\\.")[[1]][1], "_codonmodeltest", sep="")
 	
